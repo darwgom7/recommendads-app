@@ -23,7 +23,10 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.App-title {
+  color: #86BFF2;
+  font-weight: 700;
+}
 .App-link {
   color: #61dafb;
 }
