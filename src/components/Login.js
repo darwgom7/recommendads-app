@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 import userService from '../services/user';
 
-const Login = ({ setToken }) => {
+const Login = ({ setToken, setUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
 
   const handleLogin = async () => {
     try {
+      if (username.trim() === '' || password.trim() === '') {
+        console.error('Username and password are required.');
+        return;
+      }
+
       const response = await userService.login(username, password);
       if (response.access_token) {
         setToken(response.access_token);
+        const decodedToken = jwtDecode(response.access_token);
+        setUser(decodedToken); 
         localStorage.setItem('authToken', response.access_token);
+        localStorage.setItem('authUser', JSON.stringify(decodedToken));
         history.push('/ads');
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
-        <div className="col-md-6">
+        <div className="col-md-4">
           <div className="card">
             <div className="card-header">Login</div>
             <div className="card-body">
@@ -48,7 +57,7 @@ const Login = ({ setToken }) => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                <button type="button" className="btn btn-primary" onClick={handleLogin}>
+                <button type="button" className="btn btn-primary btn-block mt-3" onClick={handleLogin}>
                   Login
                 </button>
               </form>

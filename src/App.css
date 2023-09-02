@@ -27,6 +27,16 @@
   color: #86BFF2;
   font-weight: 700;
 }
+.App-recommended-ads-container {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.App-recommended-ad {
+  background-color: rgba(160, 237, 131, .1)!important;
+}
+.App-popular-ad {
+  background-color: rgba(244, 220, 77, .1)!important;
+}
 .App-link {
   color: #61dafb;
 }

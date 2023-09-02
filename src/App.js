@@ -8,16 +8,25 @@ import {
 } from "react-router-dom";
 import Login from "./components/Login";
 import Ad from "./components/Ad";
+import adService from "./services/ad";
 import "./App.css";
 
 const App = () => {
   const storedToken = localStorage.getItem("authToken");
+  const storedUser = JSON.parse(localStorage.getItem("authUser"));
   const [token, setToken] = useState(storedToken || "");
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setToken("");
+  const [user, setUser] = useState(storedUser || null);
+  const handleLogout = async () => {
+    try {
+      await adService.resetUserAds(token, user.sub);
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+      setToken("");
+    } catch (err) {
+      console.error(err);
+    }
   };
+  
 
   return (
     <Router>
@@ -44,10 +53,10 @@ const App = () => {
         </header>
         <Switch>
           <Route exact path="/login">
-            {token ? <Redirect to="/ads" /> : <Login setToken={setToken} />}
+            {token ? <Redirect to="/ads" /> : <Login setToken={setToken} setUser={setUser} />}
           </Route>
           <Route exact path="/ads">
-            {token ? <Ad token={token} /> : <Redirect to="/login" />}
+            {token ? <Ad token={token} user={user} /> : <Redirect to="/login" />}
           </Route>
           <Redirect to="/login" />
         </Switch>
